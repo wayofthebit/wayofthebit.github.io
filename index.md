@@ -1,8 +1,5 @@
 ---
 layout: page
-title: My index page
+title: wayofthebit.com
 ---
 
-This is a test.
-
-This is also a test.
