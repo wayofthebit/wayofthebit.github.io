@@ -1,0 +1,124 @@
+" Andrew Campbell's vimrc file.
+"
+" Maintainer:    Andrew Campbell
+" Last Change:   2017 May 3
+
+
+" Use Vim settings, rather then Vi settings (much better!).
+" This must be first, because it changes other options as a side effect.
+set nocompatible
+
+
+" allow backspacing over everything in insert mode
+set backspace=indent,eol,start
+
+
+" Do not keep a backup file.
+set nobackup
+
+
+" Basic setup.
+set history=50		" keep 50 lines of command line history
+set showcmd		" display incomplete commands
+set incsearch		" do incremental searching
+set vb                  " set visual bell
+set number		" set line numbers
+
+
+" Switch syntax highlighting on, when the terminal has colors
+" Also switch on highlighting the last used search pattern.
+if &t_Co > 2 || has("gui_running")
+  syntax on
+  set hlsearch
+endif
+
+
+" Only do this part when compiled with support for autocommands.
+if has("autocmd")
+  " Enable file type detection.
+  " Use the default filetype settings, so that mail gets 'tw' set to 72,
+  " 'cindent' is on in C files, etc.
+  " Also load indent files, to automatically do language-dependent indenting.
+  filetype plugin indent on
+
+  " Put these in an autocmd group, so that we can delete them easily.
+  augroup vimrcEx
+  au!
+
+  " For all text files set 'textwidth' to 78 characters.
+  autocmd FileType text setlocal textwidth=78
+
+  " When editing a file, always jump to the last known cursor position.
+  " Don't do it when the position is invalid or when inside an event handler
+  " (happens when dropping a file on gvim).
+  autocmd BufReadPost *
+    \ if line("'\"") > 0 && line("'\"") <= line("$") |
+    \   exe "normal g`\"" |
+    \ endif
+
+  augroup END
+else
+  set autoindent		" always set autoindenting on
+endif " has("autocmd")
+
+
+" Key mappings.
+nmap <Leader>c :nohlsearch<CR>              " Clears search highlighting.
+nnoremap <Leader>dt "=strftime("%c")<CR>P   " Inserts the current date.
+
+
+" Filetype settings.
+autocmd FileType c set textwidth=80 tabstop=8 shiftwidth=8 noexpandtab
+autocmd FileType c++ set textwidth=80 tabstop=8 shiftwidth=8 noexpandtab
+autocmd FileType cpp set textwidth=80 tabstop=8 shiftwidth=8 noexpandtab
+autocmd FileType h set textwidth=80 tabstop=8 shiftwidth=8 noexpandtab
+autocmd FileType html set textwidth=140 tabstop=4 shiftwidth=4 noexpandtab
+autocmd FileType markdown set textwidth=80 tabstop=8 shiftwidth=8 noexpandtab
+autocmd FileType php set textwidth=80 tabstop=4 shiftwidth=4 noexpandtab
+autocmd FileType python set textwidth=80 tabstop=4 shiftwidth=4 softtabstop=4 expandtab
+autocmd FileType ruby set textwidth=80 tabstop=2 shiftwidth=2 expandtab
+
+
+" Set basic formatting.
+set textwidth=0
+set tabstop=8
+set shiftwidth=9
+set noexpandtab
+
+
+" Set visual look and feel.
+set background=dark
+
+
+" Finding files.
+" Search down into subfolders, provides tab completion for file related tasks.
+set path+=**
+" Display all matching files when we tab complete.
+set wildmenu
+
+
+" Configure netrw, vim's file browser.
+let g:netrw_banner=0		" disable annoying banner.
+let g:netrw_browse_split=4	" open in prior window.
+let g:netrw_altv=1		" open splits to the right.
+let g:netrw_liststyle=3		" set tree view.
+let g:netrw_list_hide=netrw_gitignore#Hide()
+let g:netrw_list_hide.=',\(^\|\s\s\)\zs\.\S\+'
+
+
+" Configure statusline
+set noruler
+set laststatus=2
+set statusline=
+set statusline +=%1*\ %n\ %*            "buffer number
+set statusline +=%3*%y%*                "file type
+set statusline +=%4*\ %<%F%*            "full path
+set statusline +=%2*%m%*                "modified flag
+set statusline +=%1*%=%5l%*             "current line
+set statusline +=%2*/%L%*               "total lines
+set statusline +=%1*%4v\ %*             "virtual column number
+
+
+" Optional settings not currently applied.
+"let loaded_matchparen = 1 " Disable auto highlighting of matched parenthesis.
+"colorscheme solarized
