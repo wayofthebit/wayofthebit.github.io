@@ -1,0 +1,85 @@
+Disable lightdm session manager:
+sudo systemctl set-default multi-user.target
+PRIOR TO SYSTEMD ***echo  "manual" | sudo tee -a /etc/init/lightdm.override
+
+
+Static IP:
+sudo vi /etc/network/interfaces
+auto eth0
+iface eth0 inet static
+address <static ip> 192.168.88.253 - 192.168.149.253
+netmask <subnet mask> 255.255.255.0
+gateway <gateway> 192.168.88.2 - 192.168.149.2
+dns-search <domain> 192.168.88.2 
+dns-nameservers <dns1 dns2>
+:wq
+
+
+Install updates:
+sudo apt-get update && sudo apt-get dist-upgrade
+
+
+Install Openssh server:
+sudo apt-get install openssh-server
+
+
+Setup tightvnc:
+sudo apt-get instlal tightvncserver
+cd ~/
+mkdir bin
+vi bin/startx.sh
+#!/bin/sh
+cd $HOME
+tightvncserver -nolisten tcp -depth 16 -geometry 1020x1003 -pixelformat rgb565
+:1
+:wq
+chmod +x bin/startx.sh
+vi bin/killx.sh
+tightvncserver -kill :1
+:wq
+chmod +x bin/killx.sh
+startx.sh
+killx.sh
+vi .vnc/xstartup
+xrdb $HOME/.Xresources
+xsetroot -solid grey
+exec /bin/sh /etc/xdg/xfce4/xinitrc
+:wq
+sudo vi /etc/rc.local
+sleep 1
+su andrewc -l -c "cd /home/andrewc; /home/andrewc/bin/startx.sh"
+:wq
+sudo chmod +x /etc/rc.local
+
+
+Setting up vim:
+sudo apt-get install vim-nox
+scp andrewc@tty.sdf.org:~/.vimrc ~/
+
+
+Setting up screen:
+sudo apt-get install screen
+scp andrewc@tty.sdf.org:~/.screenrc ~/
+vim ~/.screenrc
+screen -t local 1
+screen -t local 2
+:wq
+cp /usr/share/doc/screen/examples/screenrc ~/.screenrc
+
+
+Install build tools:
+sudo apt-get install build-essential
+sudo apt-get install openjdk-7-jdk
+sudo apt-get install git
+mkdir ~/devel
+mkdir ~/usr
+mkdir ~/usr/src
+mkdir ~/usr/opt
+vim ~/.pythonrc
+import readline
+readline.parse_and_bind("set disable-completion on")
+readline.parse_and_bind("tab: self-insert")
+:wq
+vim ~/.bashrc
+export PYTHONSTARTUP=$HOME/.pythonrc
+:wq
